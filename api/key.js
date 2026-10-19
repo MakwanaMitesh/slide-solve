@@ -22,7 +22,7 @@ module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-api-token'
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-api-token, x-platform'
   );
 
   // Handle preflight OPTIONS request
@@ -39,9 +39,10 @@ module.exports = (req, res) => {
     });
   }
 
-  // Static Token and Static Key from environment variables (or secure fallback defaults)
+  // Auth token and platform keys from environment variables (or fallback defaults)
   const expectedToken = process.env.STATIC_AUTH_TOKEN || 'your_secret_auth_token_here';
-  const secretKey = process.env.STATIC_SECRET_KEY || 'your_secret_static_key_here';
+  const androidKey = process.env.ANDROID_API_KEY || process.env.STATIC_KEY_ANDROID || 'your_android_api_key_here';
+  const iosKey = process.env.IOS_API_KEY || process.env.STATIC_KEY_IOS || 'your_ios_api_key_here';
 
   // Extract token from standard 'Authorization: Bearer <token>' header or 'x-api-token'
   let clientToken = null;
@@ -75,11 +76,39 @@ module.exports = (req, res) => {
     });
   }
 
-  // 3. Token matched - return the static key securely
+  // 3. Optional platform filter (?platform=android or ?platform=ios, or header x-platform)
+  const queryPlatform = (req.query && req.query.platform) ? req.query.platform.toLowerCase() : null;
+  const headerPlatform = req.headers['x-platform'] ? req.headers['x-platform'].toLowerCase() : null;
+  const platform = queryPlatform || headerPlatform;
+
+  if (platform === 'android') {
+    return res.status(200).json({
+      success: true,
+      data: {
+        platform: 'android',
+        key: androidKey,
+        android: androidKey
+      }
+    });
+  }
+
+  if (platform === 'ios') {
+    return res.status(200).json({
+      success: true,
+      data: {
+        platform: 'ios',
+        key: iosKey,
+        ios: iosKey
+      }
+    });
+  }
+
+  // Return both keys by default
   return res.status(200).json({
     success: true,
     data: {
-      key: secretKey
+      android: androidKey,
+      ios: iosKey
     }
   });
 };
