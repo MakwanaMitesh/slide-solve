@@ -7,7 +7,7 @@ const isRemoteDb = Boolean(
 );
 
 // Clean DATABASE_URL if channel_binding is present (can cause handshake errors in node-pg)
-let cleanDatabaseUrl = process.env.DATABASE_URL;
+let cleanDatabaseUrl = process.env.DATABASE_URL ? process.env.DATABASE_URL.trim() : null;
 if (cleanDatabaseUrl) {
   cleanDatabaseUrl = cleanDatabaseUrl.replace(/&channel_binding=require/g, '').replace(/\?channel_binding=require&?/g, '?');
   if (cleanDatabaseUrl.endsWith('?')) {
@@ -15,17 +15,23 @@ if (cleanDatabaseUrl) {
   }
 }
 
+const dbHost = process.env.DB_HOST ? process.env.DB_HOST.trim() : 'localhost';
+const dbUser = process.env.DB_USER ? process.env.DB_USER.trim() : 'postgres';
+const dbPassword = process.env.DB_PASSWORD ? process.env.DB_PASSWORD.trim() : undefined;
+const dbName = process.env.DB_NAME ? process.env.DB_NAME.trim() : 'slide_solve_ads';
+const dbPort = parseInt(process.env.DB_PORT ? process.env.DB_PORT.trim() : '5432', 10);
+
 const poolConfig = cleanDatabaseUrl
   ? {
       connectionString: cleanDatabaseUrl,
       ssl: { rejectUnauthorized: false }
     }
   : {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || undefined,
-      database: process.env.DB_NAME || 'slide_solve_ads',
+      host: dbHost,
+      port: dbPort,
+      user: dbUser,
+      password: dbPassword,
+      database: dbName,
       ssl: (isRemoteDb || process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true')
         ? { rejectUnauthorized: false }
         : false,
