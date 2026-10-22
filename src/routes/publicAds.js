@@ -30,39 +30,7 @@ router.get('/google-ads', cors(corsOptions), publicApiLimiter, async (req, res) 
     return res.status(500).json({
       success: false,
       error: 'Internal Server Error',
-      message: 'Failed to retrieve Google Ads configuration.',
-      details: error.message
-    });
-  }
-});
-
-router.get('/db-debug', async (req, res) => {
-  const { pool } = require('../db');
-  const info = {
-    hasDatabaseUrl: Boolean(process.env.DATABASE_URL),
-    databaseUrlSnippet: process.env.DATABASE_URL ? process.env.DATABASE_URL.replace(/:[^:@]+@/, ':***@') : null,
-    dbHost: process.env.DB_HOST || null,
-    dbPort: process.env.DB_PORT || null,
-    dbUser: process.env.DB_USER || null,
-    dbName: process.env.DB_NAME || null,
-    hasPassword: Boolean(process.env.DB_PASSWORD)
-  };
-
-  try {
-    const testRes = await pool.query('SELECT current_database(), current_user;');
-    return res.status(200).json({
-      success: true,
-      connected: true,
-      info,
-      db: testRes.rows[0]
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      connected: false,
-      info,
-      error: err.message,
-      code: err.code
+      message: 'Failed to retrieve Google Ads configuration.'
     });
   }
 });
