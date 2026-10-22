@@ -1,10 +1,15 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const isRemoteDb = Boolean(
+  process.env.DATABASE_URL ||
+  (process.env.DB_HOST && process.env.DB_HOST !== 'localhost' && process.env.DB_HOST !== '127.0.0.1')
+);
+
 const poolConfig = process.env.DATABASE_URL
   ? {
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      ssl: { rejectUnauthorized: false }
     }
   : {
       host: process.env.DB_HOST || 'localhost',
@@ -12,8 +17,10 @@ const poolConfig = process.env.DATABASE_URL
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || undefined,
       database: process.env.DB_NAME || 'slide_solve_ads',
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-      max: 20,
+      ssl: (isRemoteDb || process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true')
+        ? { rejectUnauthorized: false }
+        : false,
+      max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000
     };
