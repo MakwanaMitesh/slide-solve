@@ -3,3 +3,6 @@ Thumbs.db
 .env
 .env*.local
 .vercel
+node_modules/
+cookies.txt
+

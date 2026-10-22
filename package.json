@@ -1,0 +1,31 @@
+{
+  "name": "slide-and-solve-google-ads-admin",
+  "version": "1.0.0",
+  "description": "Dynamic Google Ads Admin Panel with Express.js and PostgreSQL",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:init": "node scripts/init-db.js",
+    "seed:admin": "node scripts/seed-admin.js"
+  },
+  "keywords": [
+    "google-ads",
+    "admin-panel",
+    "express",
+    "postgresql",
+    "bootstrap5"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "pg": "^8.13.3"
+  }
+}

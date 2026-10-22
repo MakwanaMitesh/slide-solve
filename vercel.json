@@ -11,12 +11,20 @@
       ]
     }
   ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "public/**/*"
+    }
+  },
   "rewrites": [
     { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
     { "source": "/privacy", "destination": "/privacy-policy.html" },
     { "source": "/privacy.html", "destination": "/privacy-policy.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/terms.html", "destination": "/terms.html" },
-    { "source": "/api/get-key", "destination": "/api/key" }
+    { "source": "/api/get-key", "destination": "/api/key" },
+    { "source": "/api/v1/(.*)", "destination": "/api/index" },
+    { "source": "/admin", "destination": "/api/index" },
+    { "source": "/admin/(.*)", "destination": "/api/index" }
   ]
 }
