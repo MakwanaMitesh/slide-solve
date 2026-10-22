@@ -114,10 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 4. Fetch Current User Profile if logged in
-  const userDisplayNames = document.querySelectorAll('.user-display-name');
-  const userDisplayEmails = document.querySelectorAll('.user-display-email');
-  if (userDisplayNames.length > 0) {
+  // 4. Fetch Current User Profile & Guard Protected Pages
+  const currentPath = window.location.pathname;
+  const isLoginPage = currentPath.includes('/login');
+
+  if (!isLoginPage && currentPath.startsWith('/admin')) {
     fetch('/api/v1/admin/me')
       .then((res) => {
         if (!res.ok) throw new Error('Not authenticated');
@@ -125,16 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then((data) => {
         if (data.success && data.user) {
+          const userDisplayNames = document.querySelectorAll('.user-display-name');
+          const userDisplayEmails = document.querySelectorAll('.user-display-email');
           userDisplayNames.forEach((el) => (el.textContent = data.user.username));
           userDisplayEmails.forEach((el) => (el.textContent = data.user.email));
           if (data.csrfToken) {
             sessionStorage.setItem('csrfToken', data.csrfToken);
           }
+        } else {
+          window.location.replace('/admin/login');
         }
       })
-      .catch((err) => {
-        // Not authenticated
-        console.debug('Session check:', err.message);
+      .catch(() => {
+        // Unauthorized - immediate redirect to login
+        window.location.replace('/admin/login');
       });
   }
 });

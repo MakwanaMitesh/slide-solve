@@ -56,6 +56,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       setLoadingState(true);
       const res = await fetch('/api/v1/admin/google-ads');
+      if (res.status === 401) {
+        window.location.replace('/admin/login');
+        return;
+      }
       if (!res.ok) {
         throw new Error(`Server returned ${res.status}: ${res.statusText}`);
       }

@@ -58,15 +58,15 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/admin/login', redirectIfLoggedIn, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'login.html'));
+  res.sendFile(path.join(__dirname, 'views', 'admin', 'login.html'));
 });
 
 app.get('/admin/dashboard', requireAdminPage, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'dashboard.html'));
+  res.sendFile(path.join(__dirname, 'views', 'admin', 'dashboard.html'));
 });
 
 app.get('/admin/google-ads', requireAdminPage, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'google-ads.html'));
+  res.sendFile(path.join(__dirname, 'views', 'admin', 'google-ads.html'));
 });
 
 // ==============================================================================
