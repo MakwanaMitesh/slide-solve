@@ -1,0 +1,247 @@
+{
+  "info": {
+    "_postman_id": "a93b4e67-d812-4c28-9844-e51c890f9cb2",
+    "name": "Slide & Solve - API Collection",
+    "description": "Comprehensive API collection for Slide & Solve Google Ads Remote Configuration Engine and Admin Authentication.\n\n### Environments\n- **Production:** `https://slide-solve.kalpvarti.com`\n- **Localhost:** `http://localhost:3000`\n\n### Authentication\nAdmin endpoints use session-based cookies (`slide_solve_sid`). State-changing endpoints (PUT/POST) require the `x-csrf-token` header, which is automatically saved to the collection variable `csrfToken` upon running the Login endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://slide-solve.kalpvarti.com",
+      "type": "string",
+      "description": "API Base URL (e.g., https://slide-solve.kalpvarti.com or http://localhost:3000)"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin",
+      "type": "string",
+      "description": "Default admin username or email"
+    },
+    {
+      "key": "adminPassword",
+      "value": "Admin@12345",
+      "type": "string",
+      "description": "Admin password"
+    },
+    {
+      "key": "csrfToken",
+      "value": "",
+      "type": "string",
+      "description": "Auto-populated by the Login request test script"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Public Mobile App API",
+      "description": "Public read-only endpoints consumed by the Slide & Solve mobile application.",
+      "item": [
+        {
+          "name": "Get Google Ads Remote Config",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/config/google-ads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "config", "google-ads"]
+            },
+            "description": "Public endpoint for mobile apps to dynamically fetch Google Ads settings (ad unit IDs, format toggles, interstitial frequency, and rewarded coins)."
+          },
+          "response": [
+            {
+              "name": "200 Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/config/google-ads",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "config", "google-ads"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Google Ads configuration fetched successfully\",\n  \"data\": {\n    \"ads_enabled\": true,\n    \"test_mode\": false,\n    \"android\": {\n      \"app_id\": \"ca-app-pub-3940256099942544~3347511713\",\n      \"banner_ad_id\": \"ca-app-pub-3940256099942544/6300978111\",\n      \"interstitial_ad_id\": \"ca-app-pub-3940256099942544/1033173712\",\n      \"rewarded_ad_id\": \"ca-app-pub-3940256099942544/5224354917\",\n      \"app_open_ad_id\": \"ca-app-pub-3940256099942544/9257390508\",\n      \"native_ad_id\": \"ca-app-pub-3940256099942544/2247696110\"\n    },\n    \"ios\": {\n      \"app_id\": \"ca-app-pub-3940256099942544~1458602514\",\n      \"banner_ad_id\": \"ca-app-pub-3940256099942544/2934735716\",\n      \"interstitial_ad_id\": \"ca-app-pub-3940256099942544/4411468910\",\n      \"rewarded_ad_id\": \"ca-app-pub-3940256099942544/1712485313\",\n      \"app_open_ad_id\": \"ca-app-pub-3940256099942544/5575463023\",\n      \"native_ad_id\": \"ca-app-pub-3940256099942544/3986624511\"\n    },\n    \"ad_settings\": {\n      \"banner_enabled\": true,\n      \"interstitial_enabled\": true,\n      \"rewarded_enabled\": true,\n      \"app_open_enabled\": false,\n      \"native_enabled\": true,\n      \"interstitial_frequency\": 5,\n      \"rewarded_coins\": 75\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Admin Authentication",
+      "description": "Admin login, profile session check, and logout endpoints.",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Automatically extract and store the CSRF token from the response",
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.csrfToken) {",
+                  "        pm.collectionVariables.set('csrfToken', json.csrfToken);",
+                  "        console.log('Successfully saved CSRF Token: ' + json.csrfToken);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "login"]
+            },
+            "description": "Authenticates the admin user using username/email and password. Returns user info, establishes a session cookie (`slide_solve_sid`), and provides a CSRF token."
+          }
+        },
+        {
+          "name": "Get Admin Profile & CSRF (/me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.csrfToken) {",
+                  "        pm.collectionVariables.set('csrfToken', json.csrfToken);",
+                  "        console.log('CSRF Token refreshed: ' + json.csrfToken);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "me"]
+            },
+            "description": "Checks current admin session validity, returning profile information and the active CSRF token."
+          }
+        },
+        {
+          "name": "Admin Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "logout"]
+            },
+            "description": "Destroys the server session and clears the `slide_solve_sid` authentication cookie."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Admin Google Ads Management",
+      "description": "Protected endpoints to read and update Google Ads remote settings.",
+      "item": [
+        {
+          "name": "Get Google Ads Config (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/google-ads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "google-ads"]
+            },
+            "description": "Retrieves the current Google Ads configuration from PostgreSQL for the Admin Panel."
+          }
+        },
+        {
+          "name": "Update Google Ads Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "x-csrf-token",
+                "value": "{{csrfToken}}",
+                "description": "Security CSRF token auto-populated by the Admin Login request"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ads_enabled\": true,\n  \"test_mode\": false,\n  \"android\": {\n    \"app_id\": \"ca-app-pub-3940256099942544~3347511713\",\n    \"banner_ad_id\": \"ca-app-pub-3940256099942544/6300978111\",\n    \"interstitial_ad_id\": \"ca-app-pub-3940256099942544/1033173712\",\n    \"rewarded_ad_id\": \"ca-app-pub-3940256099942544/5224354917\",\n    \"app_open_ad_id\": \"ca-app-pub-3940256099942544/9257390508\",\n    \"native_ad_id\": \"ca-app-pub-3940256099942544/2247696110\"\n  },\n  \"ios\": {\n    \"app_id\": \"ca-app-pub-3940256099942544~1458602514\",\n    \"banner_ad_id\": \"ca-app-pub-3940256099942544/2934735716\",\n    \"interstitial_ad_id\": \"ca-app-pub-3940256099942544/4411468910\",\n    \"rewarded_ad_id\": \"ca-app-pub-3940256099942544/1712485313\",\n    \"app_open_ad_id\": \"ca-app-pub-3940256099942544/5575463023\",\n    \"native_ad_id\": \"ca-app-pub-3940256099942544/3986624511\"\n  },\n  \"ad_settings\": {\n    \"banner_enabled\": true,\n    \"interstitial_enabled\": true,\n    \"rewarded_enabled\": true,\n    \"app_open_enabled\": false,\n    \"native_enabled\": true,\n    \"interstitial_frequency\": 5,\n    \"rewarded_coins\": 75\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/google-ads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "google-ads"]
+            },
+            "description": "Updates Google Ads configuration atomically in PostgreSQL within an ACID transaction. Validates all constraints (e.g. interstitial_frequency >= 1, rewarded_coins >= 0)."
+          }
+        }
+      ]
+    }
+  ]
+}
