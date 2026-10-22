@@ -84,6 +84,7 @@ app.use('/api/v1/config', publicAdsRoutes);
 // ==============================================================================
 // Existing Static Website & Game Assets
 // ==============================================================================
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..')));
 
 // 404 handler for API routes
