@@ -10,7 +10,6 @@ const server = app.listen(PORT, async () => {
   console.log(`📡 Local Server URL: http://localhost:${PORT}`);
   console.log(`🔐 Admin Panel     : http://localhost:${PORT}/admin/login`);
   console.log(`⚙️ Ads Config Page : http://localhost:${PORT}/admin/google-ads`);
-  console.log(`📱 Public Ads API  : http://localhost:${PORT}/api/v1/config/google-ads`);
   console.log(`=======================================================`);
 
   // Verify DB connectivity

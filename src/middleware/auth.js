@@ -33,8 +33,8 @@ function verifyCsrfToken(req, res, next) {
     return next();
   }
 
-  // Exempt public endpoints or login (which establishes the session)
-  if (req.path === '/api/v1/admin/login' || req.path.startsWith('/api/v1/config/')) {
+  // Exempt login (which establishes the session)
+  if (req.path === '/api/v1/admin/login') {
     return next();
   }
 

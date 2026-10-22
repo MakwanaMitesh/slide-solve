@@ -7,7 +7,6 @@ require('dotenv').config();
 const { ensureCsrfToken, requireAdminPage, redirectIfLoggedIn } = require('./middleware/auth');
 const adminAuthRoutes = require('./routes/adminAuth');
 const adminAdsRoutes = require('./routes/adminAds');
-const publicAdsRoutes = require('./routes/publicAds');
 
 const { pool } = require('./db');
 const pgSession = require('connect-pg-simple')(session);
@@ -88,9 +87,6 @@ app.use('/api/v1/admin', adminAuthRoutes);
 
 // 2. Admin Ads Config: GET /api/v1/admin/google-ads, PUT /api/v1/admin/google-ads
 app.use('/api/v1/admin', adminAdsRoutes);
-
-// 3. Public Mobile Ads Config: GET /api/v1/config/google-ads
-app.use('/api/v1/config', publicAdsRoutes);
 
 // ==============================================================================
 // Existing Static Website & Game Assets
