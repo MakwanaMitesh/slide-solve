@@ -2,6 +2,15 @@
 -- PostgreSQL Database Schema for Google Ads Remote Configuration & Admin Panel
 -- ============================================================================
 
+-- 0. Serverless Persistent Session Table (used by connect-pg-simple)
+CREATE TABLE IF NOT EXISTS "session" (
+  "sid" VARCHAR NOT NULL COLLATE "default",
+  "sess" JSON NOT NULL,
+  "expire" TIMESTAMP(6) NOT NULL,
+  CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+);
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+
 -- 1. Admin Users Table
 -- Stores administrator credentials, secure bcrypt password hashes, and timestamps.
 CREATE TABLE IF NOT EXISTS admin_users (

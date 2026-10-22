@@ -67,7 +67,7 @@ function requireAdminPage(req, res, next) {
  */
 function redirectIfLoggedIn(req, res, next) {
   if (req.session && req.session.adminUser) {
-    return res.redirect('/admin/google-ads');
+    return res.redirect('/admin/dashboard');
   }
   next();
 }

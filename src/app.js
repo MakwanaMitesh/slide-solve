@@ -9,7 +9,13 @@ const adminAuthRoutes = require('./routes/adminAuth');
 const adminAdsRoutes = require('./routes/adminAds');
 const publicAdsRoutes = require('./routes/publicAds');
 
+const { pool } = require('./db');
+const pgSession = require('connect-pg-simple')(session);
+
 const app = express();
+
+// Enable trust proxy so secure cookies work behind Vercel edge reverse-proxy
+app.set('trust proxy', 1);
 
 // Security HTTP headers (disable CSP restrictive directive to allow Bootstrap CDNs)
 app.use(
@@ -23,10 +29,15 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Express Session configuration
+// Express Session configuration with PostgreSQL persistent store for Serverless environments
 const isProd = process.env.NODE_ENV === 'production';
 app.use(
   session({
+    store: new pgSession({
+      pool: pool,
+      tableName: 'session',
+      createTableIfMissing: true
+    }),
     name: 'slide_solve_sid',
     secret: process.env.SESSION_SECRET || 'fallback_development_session_secret_32_chars',
     resave: false,

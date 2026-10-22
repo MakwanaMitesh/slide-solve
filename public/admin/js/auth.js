@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (data.csrfToken) {
             sessionStorage.setItem('csrfToken', data.csrfToken);
           }
-          window.location.href = '/admin/google-ads';
+          window.location.href = '/admin/dashboard';
         } else {
           loginAlert.textContent = data.message || 'Invalid username or password.';
           loginAlert.classList.remove('d-none');

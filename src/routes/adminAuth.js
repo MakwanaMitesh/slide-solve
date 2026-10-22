@@ -62,15 +62,27 @@ router.post('/login', loginRateLimiter, async (req, res) => {
     // Generate fresh CSRF token
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
 
-    return res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      data: {
-        id: admin.id,
-        username: admin.username,
-        email: admin.email
-      },
-      csrfToken: req.session.csrfToken
+    // Explicitly persist session to database before sending HTTP response (essential for serverless)
+    req.session.save((saveErr) => {
+      if (saveErr) {
+        console.error('Session persistence error:', saveErr);
+        return res.status(500).json({
+          success: false,
+          error: 'Session Error',
+          message: 'Failed to save session. Please try again.'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          id: admin.id,
+          username: admin.username,
+          email: admin.email
+        },
+        csrfToken: req.session.csrfToken
+      });
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -98,7 +110,7 @@ router.post('/logout', (req, res) => {
       });
     }
 
-    res.clearCookie('connect.sid');
+    res.clearCookie('slide_solve_sid');
     return res.status(200).json({
       success: true,
       message: 'Logged out successfully'
