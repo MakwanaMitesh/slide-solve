@@ -6,9 +6,18 @@ const isRemoteDb = Boolean(
   (process.env.DB_HOST && process.env.DB_HOST !== 'localhost' && process.env.DB_HOST !== '127.0.0.1')
 );
 
-const poolConfig = process.env.DATABASE_URL
+// Clean DATABASE_URL if channel_binding is present (can cause handshake errors in node-pg)
+let cleanDatabaseUrl = process.env.DATABASE_URL;
+if (cleanDatabaseUrl) {
+  cleanDatabaseUrl = cleanDatabaseUrl.replace(/&channel_binding=require/g, '').replace(/\?channel_binding=require&?/g, '?');
+  if (cleanDatabaseUrl.endsWith('?')) {
+    cleanDatabaseUrl = cleanDatabaseUrl.slice(0, -1);
+  }
+}
+
+const poolConfig = cleanDatabaseUrl
   ? {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: cleanDatabaseUrl,
       ssl: { rejectUnauthorized: false }
     }
   : {
@@ -22,7 +31,7 @@ const poolConfig = process.env.DATABASE_URL
         : false,
       max: 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000
+      connectionTimeoutMillis: 10000
     };
 
 const pool = new Pool(poolConfig);

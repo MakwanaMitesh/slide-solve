@@ -77,7 +77,8 @@ router.post('/login', loginRateLimiter, async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Internal Server Error',
-      message: 'An unexpected error occurred during login. Please try again later.'
+      message: error.message || 'An unexpected error occurred during login. Please try again later.',
+      details: error.code || null
     });
   }
 });
