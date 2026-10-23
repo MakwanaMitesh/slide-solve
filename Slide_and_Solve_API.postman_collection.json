@@ -154,7 +154,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "admin", "google-ads"]
             },
-            "description": "Retrieves the current Google Ads configuration from PostgreSQL for the Admin Panel (Admin Auth Required)."
+            "description": "Retrieves the current Google Ads configuration from PostgreSQL (Public, No Auth Required)."
           }
         },
         {

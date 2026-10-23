@@ -234,8 +234,9 @@ Returns the currently logged-in admin user and their session CSRF token.
 ### 3. Admin Configuration APIs (Protected)
 
 #### `GET /api/v1/admin/google-ads`
-Retrieves current database values to populate the admin edit form.
-* **Authentication**: Required (`connect.sid` cookie).
+Retrieves current database Google Ads values.
+* **Authentication**: None (Public endpoint).
+* **CORS**: Enabled (`*`).
 * **Response Status**: `200 OK`
 
 #### `PUT /api/v1/admin/google-ads`
